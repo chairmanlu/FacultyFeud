@@ -5,8 +5,8 @@ import javax.swing.event.*;
 import java.util.*;
 
 @SuppressWarnings("serial")
-public class Panel extends JPanel{
-	public Panel(){
+public class ContestantPanel extends JPanel{
+	public ContestantPanel(){
 		super();
 		Dimension screenSize=Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLayout(null);

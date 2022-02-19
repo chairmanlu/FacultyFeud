@@ -1,6 +1,6 @@
 default: feud
 
-feud: Driver.class Panel.class
+feud: Driver.class ModeratorPanel.class ContestantPanel.class
 	java -cp ../bin Driver
 
 %.class: %.java

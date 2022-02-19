@@ -2,7 +2,7 @@ import javax.swing.*;
 
 public class Driver{
 	public static void main(String[] args){
-		Panel p=new Panel();
+		ContestantPanel p = new ContestantPanel();
 		JFrame frame = new JFrame();
 		frame.add(p);
 		frame.pack();
