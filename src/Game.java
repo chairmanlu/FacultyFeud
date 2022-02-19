@@ -4,8 +4,8 @@ public class Game{
 	private int strikes;
 	private int[] scores;//Teams are numbered 0 or 1
 	private ArrayList<Question> questions;
-	private int curQ;
-	private int currentScore;
+	private int curQ; // index of current question
+	private int currentScore; // current question, points gotten from current question
 
 	public Game(){
 		questions = new ArrayList<>();
@@ -20,7 +20,8 @@ public class Game{
 	}
 
 	public void assignScore(int team){
-
+		scores[team] += currentScore;
+		currentScore = 0;
 	}
 
 	public int currentScore(){
@@ -28,7 +29,7 @@ public class Game{
 	}
 
 	public void addStrike(){
-
+		strike++;
 	}
 
 	public int getStrikes(){
@@ -36,11 +37,17 @@ public class Game{
 	}
 
 	public Question getCurrentQuestion(){
-		return null;
+		return questions[curQ];
 	}
 
 	//Returns -1 if no further questions
 	public int nextQuestion(){
-		return -1;
+		curQ++;
+		if(curQ >= questions.length()) {
+			return -1;
+		}
+		else {
+			return curQ;
+		}
 	}
 }
