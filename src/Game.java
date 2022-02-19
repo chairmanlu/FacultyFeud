@@ -28,8 +28,10 @@ public class Game{
 		return currentScore;
 	}
 
-	public void addStrike(){
+	// returns true if it was strike 3
+	public Bool addStrike(){
 		strike++;
+		return strike == 3;
 	}
 
 	public int getStrikes(){
@@ -43,6 +45,7 @@ public class Game{
 	//Returns -1 if no further questions
 	public int nextQuestion(){
 		curQ++;
+		strikes = 0;
 		if(curQ >= questions.length()) {
 			return -1;
 		}
