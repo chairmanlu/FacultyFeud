@@ -11,9 +11,11 @@ public class Question{
 		}
 	}
 	
+	private String question;
 	private ArrayList<Response> responses;
 
-	public Question(){
-		responses = new ArrayList<>();
+	public Question(String question, ArrayList<Response> responses){
+		question = question;
+		responses = responses;
 	}
 }
