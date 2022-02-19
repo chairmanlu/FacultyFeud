@@ -2,12 +2,20 @@ import java.util.*;
 
 public class Question{
 	static class Response{
-		String response;
-		int score;
+		private String response;
+		private int score;
 
 		public Response(String response, int score){
 			this.response = response;
 			this.score = score;
+		}
+
+		public String getResponse(){
+			return response;
+		}
+
+		public int getScore(){
+			return score;
 		}
 	}
 	
@@ -15,7 +23,7 @@ public class Question{
 	private ArrayList<Response> responses;
 
 	public Question(String question, ArrayList<Response> responses){
-		question = question;
-		responses = responses;
+		this.question = question;
+		this.responses = responses;
 	}
 }

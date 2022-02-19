@@ -7,7 +7,12 @@ public class Game{
 	private int curQ; // index of current question
 	private int currentScore; // current question, points gotten from current question
 
-	public Game(){
+	private String questionFile;
+
+	public Game(String questionFile){
+		questionFile = questionFile;
+		
+
 		questions = new ArrayList<>();
 		curQ = 0;
 		strikes = 0;
