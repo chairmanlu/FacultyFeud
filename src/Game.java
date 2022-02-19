@@ -1,3 +1,5 @@
+import java.util.*;
+
 public class Game{
 	private int strikes;
 	private int[] scores;//Teams are numbered 0 or 1
