@@ -11,13 +11,16 @@ public class Game{
 
 	public Game(String questionFile){
 		questionFile = questionFile;
+		this.parseQuestionFile();
 		
-
-		questions = new ArrayList<>();
 		curQ = 0;
 		strikes = 0;
 		scores = new int[2];
 		currentScore = 0;
+	}
+
+	private parseQuestionFile(){
+		questions = new ArrayList<>();
 	}
 
 	public int getScore(int team){
