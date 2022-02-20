@@ -18,12 +18,16 @@ public class Question{
 			return score;
 		}
 	}
-	
+
 	private String question;
 	private ArrayList<Response> responses;
 
 	public Question(String question, ArrayList<Response> responses){
 		this.question = question;
 		this.responses = responses;
+	}
+
+    public Response getResponse(int i){
+		return responses.get(i);
 	}
 }

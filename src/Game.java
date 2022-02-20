@@ -12,7 +12,7 @@ public class Game{
 
 	private String questionFile;
 
-	public Game(String questionFile){
+	public Game(String questionFile) throws FileNotFoundException, IOException {
 		questionFile = questionFile;
 		this.parseQuestionFile();
 
@@ -23,31 +23,39 @@ public class Game{
         multiplier = 1;
 	}
 
-	private void parseQuestionFile(){
-        /*
-        questions = new ArrayList<Question>();
-        Scanner sc = new Scanner(new File(questionFile));
-        while (sc.hasNextLine())  //returns a boolean value
-        {
-            sc.useDelimiter(",")
-            System.out.print(sc.next());  //find and returns the next complete token from this scanner
-        }
-        sc.close();  //closes the scanner
+	private void parseQuestionFile() throws FileNotFoundException, IOException {
+        BufferedReader reader = new BufferedReader(new FileReader(questionFile));
 
-        while((nextRecord = csvReader.readNext()) != null){
-            rezzys = new ArrayList<Response>();
-            String q = newRecord[0];
-            int len = nextRecord.length() - 1;
-            for(int i = 0; i < len/2; i++) {
-                rez = newRecord[2*i + 1];
-                count = newRecord[2*i + 2];
-                Response fun = new Response(rez, count);
-                rezzys.append(fun);
+		// read file line by line
+		String line = null;
+		Scanner scanner = null;
+		int index = 0;
+		questions = new ArrayList<Question>();
+
+		while ((line = reader.readLine()) != null) {
+            ArrayList<Question.Response> rezzys = new ArrayList<Question.Response>();
+            String q = "";
+			scanner = new Scanner(line);
+			scanner.useDelimiter(",");
+            int count = 0;
+			while (scanner.hasNext()) {
+                if(count == 0){
+				    q = scanner.next();
+                    count++;
+                } else {
+                    String rez = scanner.next();
+                    int points = Integer.parseInt(scanner.next());
+                    Question.Response fun = new Question.Response(rez, points);
+                    rezzys.add(fun);
+                    count++;
+                }
             }
             Question zesty = new Question(q, rezzys);
-            questions.append(zesty);
-        }
-        */
+            questions.add(zesty);
+		}
+
+		//close reader
+		reader.close();
 	}
 
 	public int getScore(int team){
@@ -91,5 +99,12 @@ public class Game{
 
     public void setMultiplier(int m){
         multiplier = m;
+    }
+
+    public void revealResponse(int i){
+        Question rev = questions.get(curQ);
+        Question.Response res = rev.getResponse(i);
+        int points = res.getScore();
+        currentScore = currentScore + points;
     }
 }
