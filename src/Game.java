@@ -5,10 +5,12 @@ import java.util.Scanner;
 public class Game{
 	private int strikes;
 	private int[] scores;//Teams are numbered 0 or 1
+	private String[] teamNames;
 	private ArrayList<Question> questions;
 	private int curQ; // index of current question
 	private int currentScore; // current question, points gotten from current question
 	private int multiplier;
+
 
 	private String questionFile;
 
@@ -48,14 +50,24 @@ public class Game{
 
 		Scanner sc = new Scanner(new File(questionFile));
 		ArrayList<Question.Response> responses = new ArrayList<Question.Response>();
+		boolean firstLine = true;
 		while(sc.hasNextLine()){
 			String line = sc.nextLine();
 			String[] tokens = line.split(",");
-			for(int i=1;i<tokens.length;i+=2){
-				responses.add(new Question.Response(tokens[i],Integer.parseInt(tokens[i+1])));
+			if(firstLine){
+			// first line are team names
+				teamNames[0] = tokens[0];
+				teamNames[1] = tokens[1];
+				firstLine = false;
 			}
-			Question q = new Question(tokens[0],responses);
-			questions.add(q);
+			else{
+			// rest of lines are question, response1, score1, response2, score2, ...
+				for(int i=1;i<tokens.length;i+=2){
+					responses.add(new Question.Response(tokens[i],Integer.parseInt(tokens[i+1])));
+				}
+				Question q = new Question(tokens[0],responses);
+				questions.add(q);
+			}
 		}
 		sc.close();
 		curQ = 0;
