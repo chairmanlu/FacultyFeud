@@ -71,13 +71,9 @@ public class ContestantPanel extends JPanel{
 
 		//Question Board
 		Question q = game.getCurrentQuestion();
-		ArrayList<Question.Response> responses = new ArrayList<>();
-//		responses.add(new Question.Response("Response 1", 25));
-//		responses.add(new Question.Response("Response 2", 25));
-//		responses.add(new Question.Response("Response 3", 25));
-//		responses.add(new Question.Response("Response 4", 25));
-//		responses.add(new Question.Response("Response 5", 25));
-//		Question q = new Question("Question Test", responses);
+//		for(int i=0;i<q.numResponses();i++){
+//			System.out.println(q.getResponse(i).getResponse());
+//		}
 
 		JLabel question = new JLabel(q.getQuestionText(), SwingConstants.CENTER);
 		this.add(question);
@@ -88,10 +84,10 @@ public class ContestantPanel extends JPanel{
 		for(int i=0;i<4;i++){
 			ResponsePanel rp;
 			if(i < q.numResponses()){
-				rp = new ResponsePanel(q.getResponse(i), PanelMode.CONTESTANT);
+				rp = new ResponsePanel(game, q.getResponse(i), PanelMode.CONTESTANT, i);
 			}
 			else{
-				rp = new ResponsePanel(new Question.Response("",0), PanelMode.CONTESTANT);
+				rp = new ResponsePanel(game, new Question.Response("",0), PanelMode.CONTESTANT, i);
 			}
 			this.add(rp);
 			rp.setBounds(0, h + i * height / 8, width / 2, height / 8);
@@ -101,10 +97,10 @@ public class ContestantPanel extends JPanel{
 		for(int i=0;i<4;i++){
 			ResponsePanel rp;
 			if(i + 4< q.numResponses()){
-				rp = new ResponsePanel(q.getResponse(i + 4), PanelMode.CONTESTANT);
+				rp = new ResponsePanel(game, q.getResponse(i + 4), PanelMode.CONTESTANT, i + 4);
 			}
 			else{
-				rp = new ResponsePanel(new Question.Response("",0), PanelMode.CONTESTANT);
+				rp = new ResponsePanel(game, new Question.Response("",0), PanelMode.CONTESTANT, i + 4);
 			}
 			this.add(rp);
 			rp.setBounds(width / 2, h + i * height / 8, width / 2, height / 8);

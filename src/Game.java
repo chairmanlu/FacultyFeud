@@ -47,10 +47,10 @@ public class Game{
 //		reader.close();
 
 		Scanner sc = new Scanner(new File(questionFile));
-		ArrayList<Question.Response> responses = new ArrayList<Question.Response>();
 		while(sc.hasNextLine()){
 			String line = sc.nextLine();
 			String[] tokens = line.split(",");
+			ArrayList<Question.Response> responses = new ArrayList<Question.Response>();
 			for(int i=1;i<tokens.length;i+=2){
 				responses.add(new Question.Response(tokens[i],Integer.parseInt(tokens[i+1])));
 			}

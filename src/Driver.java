@@ -10,5 +10,12 @@ public class Driver{
 		frame.pack();
 		frame.setVisible(true);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+		ModeratorPanel p2 = new ModeratorPanel(g, p);
+		JFrame frame2 = new JFrame();
+		frame2.add(p2);
+		frame2.pack();
+		frame2.setVisible(true);
+		frame2.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 	}
 }
