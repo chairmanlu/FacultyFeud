@@ -27,7 +27,19 @@ public class Question{
 		this.responses = responses;
 	}
 
-    public Response getResponse(int i){
+	public void addResponse(Response r){
+		responses.add(r);
+	}
+
+	public int numResponses(){
+		return responses.size();
+	}
+
+	public Response getResponse(int i){
 		return responses.get(i);
+	}
+
+	public String getQuestionText(){
+		return question;
 	}
 }

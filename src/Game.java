@@ -8,54 +8,61 @@ public class Game{
 	private ArrayList<Question> questions;
 	private int curQ; // index of current question
 	private int currentScore; // current question, points gotten from current question
-    private int multiplier;
+	private int multiplier;
 
 	private String questionFile;
 
 	public Game(String questionFile) throws FileNotFoundException, IOException {
-		questionFile = questionFile;
-		this.parseQuestionFile();
+//		BufferedReader reader = new BufferedReader(new FileReader(questionFile));
+//
+//		// read file line by line
+//		String line = null;
+//		Scanner scanner = null;
+//		int index = 0;
+		questions = new ArrayList<Question>();
+//
+//		while ((line = reader.readLine()) != null) {
+//			ArrayList<Question.Response> rezzys = new ArrayList<Question.Response>();
+//			String q = "";
+//			scanner = new Scanner(line);
+//			scanner.useDelimiter(",");
+//			int count = 0;
+//			while (scanner.hasNext()) {
+//				if(count == 0){
+//					q = scanner.next();
+//					count++;
+//				} else {
+//					String rez = scanner.next();
+//					int points = Integer.parseInt(scanner.next());
+//					Question.Response fun = new Question.Response(rez, points);
+//					rezzys.add(fun);
+//					count++;
+//				}
+//			}
+//			Question zesty = new Question(q, rezzys);
+//			questions.add(zesty);
+//		}
+//
+//		//close reader
+//		reader.close();
 
+		Scanner sc = new Scanner(new File(questionFile));
+		ArrayList<Question.Response> responses = new ArrayList<Question.Response>();
+		while(sc.hasNextLine()){
+			String line = sc.nextLine();
+			String[] tokens = line.split(",");
+			for(int i=1;i<tokens.length;i+=2){
+				responses.add(new Question.Response(tokens[i],Integer.parseInt(tokens[i+1])));
+			}
+			Question q = new Question(tokens[0],responses);
+			questions.add(q);
+		}
+		sc.close();
 		curQ = 0;
 		strikes = 0;
 		scores = new int[2];
 		currentScore = 0;
-        multiplier = 1;
-	}
-
-	private void parseQuestionFile() throws FileNotFoundException, IOException {
-        BufferedReader reader = new BufferedReader(new FileReader(questionFile));
-
-		// read file line by line
-		String line = null;
-		Scanner scanner = null;
-		int index = 0;
-		questions = new ArrayList<Question>();
-
-		while ((line = reader.readLine()) != null) {
-            ArrayList<Question.Response> rezzys = new ArrayList<Question.Response>();
-            String q = "";
-			scanner = new Scanner(line);
-			scanner.useDelimiter(",");
-            int count = 0;
-			while (scanner.hasNext()) {
-                if(count == 0){
-				    q = scanner.next();
-                    count++;
-                } else {
-                    String rez = scanner.next();
-                    int points = Integer.parseInt(scanner.next());
-                    Question.Response fun = new Question.Response(rez, points);
-                    rezzys.add(fun);
-                    count++;
-                }
-            }
-            Question zesty = new Question(q, rezzys);
-            questions.add(zesty);
-		}
-
-		//close reader
-		reader.close();
+		multiplier = 1;
 	}
 
 	public int getScore(int team){
@@ -97,14 +104,14 @@ public class Game{
 		}
 	}
 
-    public void setMultiplier(int m){
-        multiplier = m;
-    }
+	public void setMultiplier(int m){
+		multiplier = m;
+	}
 
-    public void revealResponse(int i){
-        Question rev = questions.get(curQ);
-        Question.Response res = rev.getResponse(i);
-        int points = res.getScore();
-        currentScore = currentScore + points;
-    }
+	public void revealResponse(int i){
+		Question rev = questions.get(curQ);
+		Question.Response res = rev.getResponse(i);
+		int points = res.getScore();
+		currentScore = currentScore + points;
+	}
 }
