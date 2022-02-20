@@ -6,7 +6,8 @@ import java.awt.event.*;
 @SuppressWarnings("serial")
 public class ResponsePanel extends JPanel{
 	private Question.Response response;
-	private JLabel text, score;
+	private JComponent text;
+	private JLabel score;
 	private PanelMode mode;
 
 	private void setLabelFont(JLabel l, double factor){
@@ -30,13 +31,24 @@ public class ResponsePanel extends JPanel{
 		l.setFont(new Font(labelFont.getName(), Font.PLAIN, fontSizeToUse));
 	}
 
-	public ResponsePanel(Question.Response response, PanelMode mode){
+	public ResponsePanel(Game game, Question.Response response, PanelMode mode, int index){
 		this.setVisible(true);
 		this.setLayout(null);
 		this.response = response;
 		this.mode = mode;
 
-		text = new JLabel(response.getResponse(), SwingConstants.CENTER);
+		if(mode == PanelMode.CONTESTANT){
+			text = new JLabel(response.getResponse(), SwingConstants.CENTER);
+		}
+		else{
+			text = new JButton(response.getResponse());
+			((JButton) text).addActionListener(new ActionListener(){
+				@Override
+				public void actionPerformed(ActionEvent e){
+					game.revealResponse(index);
+				}
+			});
+		}
 		if(response.getResponse().equals("")){
 			score = new JLabel("");
 		}
@@ -57,7 +69,7 @@ public class ResponsePanel extends JPanel{
 		text.setBounds(0,0,this.getWidth() - this.getHeight(),this.getHeight());
 		score.setBounds(this.getWidth() - this.getHeight(), 0, this.getHeight(), this.getHeight());
 
-		setLabelFont(text,0.5);
+//		setLabelFont(text,0.5);
 		setLabelFont(score,0.5);
 	}
 }
