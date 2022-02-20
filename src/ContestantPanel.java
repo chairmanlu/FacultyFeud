@@ -9,6 +9,8 @@ public class ContestantPanel extends JPanel{
 	private int width;
 	private int height;
 	private Game game;
+	private Driver.Updater updater;
+	private boolean revealed[] = new boolean[8];
 
 	private void setLabelFont(JLabel l, double factor){
 		Font labelFont = l.getFont();
@@ -60,6 +62,20 @@ public class ContestantPanel extends JPanel{
 		renderPanel();
 	}
 
+	public void setUpdater(Driver.Updater u){
+		this.updater = u;
+	}
+
+	public void unreveal(){
+		for(int i=0;i<revealed.length;i++){
+			revealed[i] = false;
+		}
+	}
+
+	public void reveal(int index){
+		revealed[index] = true;
+	}
+
 	public void renderPanel(){
 		this.removeAll();
 
@@ -84,26 +100,32 @@ public class ContestantPanel extends JPanel{
 		for(int i=0;i<4;i++){
 			ResponsePanel rp;
 			if(i < q.numResponses()){
-				rp = new ResponsePanel(game, q.getResponse(i), PanelMode.CONTESTANT, i);
+				rp = new ResponsePanel(game, q.getResponse(i), PanelMode.CONTESTANT, i, updater);
 			}
 			else{
-				rp = new ResponsePanel(game, new Question.Response("",0), PanelMode.CONTESTANT, i);
+				rp = new ResponsePanel(game, new Question.Response("",0), PanelMode.CONTESTANT, i, updater);
 			}
 			this.add(rp);
 			rp.setBounds(0, h + i * height / 8, width / 2, height / 8);
+			if(revealed[i]){
+				rp.reveal();
+			}
 		}
 
 		//Column 2
 		for(int i=0;i<4;i++){
 			ResponsePanel rp;
 			if(i + 4< q.numResponses()){
-				rp = new ResponsePanel(game, q.getResponse(i + 4), PanelMode.CONTESTANT, i + 4);
+				rp = new ResponsePanel(game, q.getResponse(i + 4), PanelMode.CONTESTANT, i + 4, updater);
 			}
 			else{
-				rp = new ResponsePanel(game, new Question.Response("",0), PanelMode.CONTESTANT, i + 4);
+				rp = new ResponsePanel(game, new Question.Response("",0), PanelMode.CONTESTANT, i + 4, updater);
 			}
 			this.add(rp);
 			rp.setBounds(width / 2, h + i * height / 8, width / 2, height / 8);
+			if(revealed[i + 4]){
+				rp.reveal();
+			}
 		}
 
 		//Scoreboard

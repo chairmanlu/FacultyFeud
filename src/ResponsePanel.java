@@ -9,6 +9,7 @@ public class ResponsePanel extends JPanel{
 	private JComponent text;
 	private JLabel score;
 	private PanelMode mode;
+	private boolean revealed = false;
 
 	private void setLabelFont(JLabel l, double factor){
 		Font labelFont = l.getFont();
@@ -31,14 +32,20 @@ public class ResponsePanel extends JPanel{
 		l.setFont(new Font(labelFont.getName(), Font.PLAIN, fontSizeToUse));
 	}
 
-	public ResponsePanel(Game game, Question.Response response, PanelMode mode, int index){
+	public ResponsePanel(Game game, Question.Response response, PanelMode mode, int index, Driver.Updater updater){
 		this.setVisible(true);
 		this.setLayout(null);
 		this.response = response;
 		this.mode = mode;
 
 		if(mode == PanelMode.CONTESTANT){
-			text = new JLabel(response.getResponse(), SwingConstants.CENTER);
+			if(response.getResponse().equals("")){
+				text = new JLabel("", SwingConstants.CENTER);
+			}
+			else{
+				text = new JLabel(String.valueOf(index + 1), SwingConstants.CENTER);
+			}
+			score = new JLabel("", SwingConstants.CENTER);
 		}
 		else{
 			text = new JButton(response.getResponse());
@@ -46,14 +53,19 @@ public class ResponsePanel extends JPanel{
 				@Override
 				public void actionPerformed(ActionEvent e){
 					game.revealResponse(index);
+					((JButton) text).setEnabled(false);
+					JButton source = (JButton) e.getSource();
+					source.setEnabled(false);
+					updater.reveal(index);
+					updater.update();
 				}
 			});
-		}
-		if(response.getResponse().equals("")){
-			score = new JLabel("");
-		}
-		else{
-			score = new JLabel(String.valueOf(response.getScore()), SwingConstants.CENTER);
+			if(response.getResponse().equals("")){
+				score = new JLabel("", SwingConstants.CENTER);
+			}
+			else{
+				score = new JLabel(String.valueOf(response.getScore()), SwingConstants.CENTER);
+			}
 		}
 
 		this.add(text);
@@ -61,6 +73,32 @@ public class ResponsePanel extends JPanel{
 
 		text.setBounds(0,0,this.getWidth() - this.getHeight(),this.getHeight());
 		score.setBounds(this.getWidth() - this.getHeight(), 0, this.getHeight(), this.getHeight());
+	}
+
+	public void reveal(){
+		this.revealed = true;
+		((JLabel) text).setText(response.getResponse());
+		score.setText(String.valueOf(response.getScore()));
+	}
+
+	public void setResponse(Question.Response r){
+		this.response = r;
+		if(mode == PanelMode.CONTESTANT){
+			((JLabel) text).setText(r.getResponse());
+		}
+		else{
+			((JButton) text).setText(r.getResponse());
+		}
+		if(r.getResponse().equals("")){
+			score.setText("");
+		}
+		else{
+			score.setText(String.valueOf(r.getScore()));
+		}
+	}
+
+	public void enableBtn(){
+		((JButton) text).setEnabled(true);
 	}
 
 	@Override

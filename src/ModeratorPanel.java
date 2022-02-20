@@ -9,9 +9,12 @@ public class ModeratorPanel extends JPanel{
 	private int width;
 	private int height;
 	private Game game;
-
-	ModeratorPanel p;
-	ContestantPanel c;
+	private Driver.Updater updater;
+	private ResponsePanel[] responseBtns;
+	private static final JLabel title = new JLabel("Faculty Feud",SwingConstants.CENTER);
+	private static JLabel question = new JLabel("",SwingConstants.CENTER);
+	private static JLabel strikes = new JLabel("",SwingConstants.CENTER);
+	private static JButton addStrike, assignScore1, assignScore2;
 
 	private void setLabelFont(JLabel l, double factor){
 		Font labelFont = l.getFont();
@@ -34,18 +37,66 @@ public class ModeratorPanel extends JPanel{
 		l.setFont(new Font(labelFont.getName(), Font.PLAIN, fontSizeToUse));
 	}
 
-	public ModeratorPanel(Game g, ContestantPanel c){
+	public ModeratorPanel(Game g){
 		super();
 		Dimension screenSize=Toolkit.getDefaultToolkit().getScreenSize();
 		this.setLayout(null);
 		this.width = (int) screenSize.getWidth() / 2;
 		this.height = (int) screenSize.getHeight() / 2;
 		this.game = g;
-		this.c = c;
-		this.p = this;
+		this.responseBtns = new ResponsePanel[8];
+		this.add(title);
+		this.add(question);
 		this.setPreferredSize(new Dimension(width,height));
 		this.setVisible(true);
 		this.requestFocus();
+
+		addStrike = new JButton("Add Strike");
+		addStrike.addActionListener(new ActionListener(){
+			//@Override
+			public void actionPerformed(ActionEvent e){
+				if(game.addStrike()){
+					JButton source = (JButton) e.getSource();
+					source.setEnabled(false);
+				}
+				updater.update();
+			}
+		});
+
+		assignScore1 = new JButton("Score for Team 1");
+		assignScore1.addActionListener(new ActionListener(){
+			//@Override
+			public void actionPerformed(ActionEvent e){
+				game.assignScore(0);
+				game.nextQuestion();
+				for(int i=0;i<responseBtns.length;i++){
+					responseBtns[i].enableBtn();
+					addStrike.setEnabled(true);
+				}
+				updater.unreveal();
+				updater.update();
+			}
+		});
+
+		assignScore2 = new JButton("Score for Team 2");
+		assignScore2.addActionListener(new ActionListener(){
+			//@Override
+			public void actionPerformed(ActionEvent e){
+				game.assignScore(1);
+				game.nextQuestion();
+				for(int i=0;i<responseBtns.length;i++){
+					responseBtns[i].enableBtn();
+					addStrike.setEnabled(true);
+				}
+				updater.unreveal();
+				updater.update();
+			}
+		});
+
+		this.add(addStrike);
+		this.add(assignScore1);
+		this.add(assignScore2);
+		this.add(strikes);
 
 		this.addComponentListener(new ComponentAdapter() {
 			@Override
@@ -61,103 +112,56 @@ public class ModeratorPanel extends JPanel{
 				System.out.println("Moved to " + e.getComponent().getLocation());
 			}
 		});
+	}
 
+	public void setUpdater(Driver.Updater u){
+		this.updater = u;
+		for(int i=0;i<8;i++){
+			ResponsePanel rp = new ResponsePanel(game, new Question.Response("",0), PanelMode.MODERATOR, i, updater);
+			responseBtns[i] = rp;
+			this.add(rp);
+		}
 		renderPanel();
 	}
 
 	public void renderPanel(){
-		this.removeAll();
-
-		JLabel title = new JLabel("Faculty Feud",SwingConstants.CENTER);
-		this.add(title);
+//		this.removeAll();
 
 		title.setBounds(0, 0, width, height / 8);
 		setLabelFont(title, 0.8);
 
 		//Question Board
 		Question q = game.getCurrentQuestion();
-		System.out.println(q);
-		ArrayList<Question.Response> responses = new ArrayList<>();
-//		responses.add(new Question.Response("Response 1", 25));
-//		responses.add(new Question.Response("Response 2", 25));
-//		responses.add(new Question.Response("Response 3", 25));
-//		responses.add(new Question.Response("Response 4", 25));
-//		responses.add(new Question.Response("Response 5", 25));
-//		Question q = new Question("Question Test", responses);
 
-		JLabel question = new JLabel(q.getQuestionText(), SwingConstants.CENTER);
-		this.add(question);
+		question = new JLabel(q.getQuestionText(), SwingConstants.CENTER);
 		question.setBounds(0,height / 8, width, height / 8);
 
 		int h = height / 4;
 		//Column 1
 		for(int i=0;i<4;i++){
-			ResponsePanel rp;
+			ResponsePanel rp = responseBtns[i];
 			if(i < q.numResponses()){
-				rp = new ResponsePanel(game, q.getResponse(i), PanelMode.MODERATOR, i);
+				rp.setResponse(q.getResponse(i));
 			}
 			else{
-				rp = new ResponsePanel(game, new Question.Response("",0), PanelMode.MODERATOR, i);
+				rp.setResponse(new Question.Response("",0));
 			}
-			this.add(rp);
 			rp.setBounds(0, h + i * height / 8, width / 2, height / 8);
 		}
 
 		//Column 2
 		for(int i=0;i<4;i++){
-			ResponsePanel rp;
-			if(i + 4< q.numResponses()){
-				rp = new ResponsePanel(game, q.getResponse(i + 4), PanelMode.MODERATOR, i + 4);
+			ResponsePanel rp = responseBtns[i + 4];
+			if(i + 4 < q.numResponses()){
+				rp.setResponse(q.getResponse(i + 4));
 			}
 			else{
-				rp = new ResponsePanel(game, new Question.Response("",0), PanelMode.MODERATOR, i + 4);
+				rp.setResponse(new Question.Response("",0));
 			}
-			this.add(rp);
 			rp.setBounds(width / 2, h + i * height / 8, width / 2, height / 8);
 		}
 
 		//Scoreboard
-		JButton nextQuestion = new JButton("Next Question");
-		nextQuestion.addActionListener(new ActionListener(){
-			//@Override
-			public void actionPerformed(ActionEvent e){
-				game.nextQuestion();
-				p.renderPanel();
-				c.renderPanel();
-			}
-		});
-
-		JButton addStrike = new JButton("Add Strike");
-		JButton assignScore1 = new JButton("Score for Team 1");
-		JButton assignScore2 = new JButton("Score for Team 2");
-		JLabel strikes = new JLabel("X", SwingConstants.CENTER);
-
-		addStrike.addActionListener(new ActionListener(){
-			//@Override
-			public void actionPerformed(ActionEvent e){
-				game.addStrike();
-				p.renderPanel();
-				c.renderPanel();
-			}
-		});
-
-		assignScore1.addActionListener(new ActionListener(){
-			//@Override
-			public void actionPerformed(ActionEvent e){
-				game.assignScore(0);
-				p.renderPanel();
-				c.renderPanel();
-			}
-		});
-
-		assignScore2.addActionListener(new ActionListener(){
-			//@Override
-			public void actionPerformed(ActionEvent e){
-				game.assignScore(1);
-				p.renderPanel();
-				c.renderPanel();
-			}
-		});
 
 		String striketext = "";
 		for(int i=0;i<game.getStrikes();i++){
@@ -165,14 +169,7 @@ public class ModeratorPanel extends JPanel{
 		}
 		strikes.setText(striketext);
 
-		this.add(nextQuestion);
-		this.add(addStrike);
-		this.add(assignScore1);
-		this.add(assignScore2);
-		this.add(strikes);
-
 		h = 3 * (height / 4);
-		nextQuestion.setBounds(0, h, width / 3, height / 8);
 		addStrike.setBounds(width / 3, h, width / 3, height / 8);
 		h += height / 8;
 		assignScore1.setBounds(0, h, width / 3, height / 8);
