@@ -126,4 +126,8 @@ public class Game{
 		int points = res.getScore();
 		currentScore = currentScore + points;
 	}
+
+	public String getTeamName(int team){
+		return teamNames[team];
+	}
 }
