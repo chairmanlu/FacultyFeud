@@ -15,6 +15,10 @@ public class Driver{
 			m.renderPanel();
 		}
 
+		public void strike(){
+			c.showStrike();
+		}
+
 		public void reveal(int index){
 			c.reveal(index);
 		}
@@ -22,10 +26,19 @@ public class Driver{
 		public void unreveal(){
 			c.unreveal();
 		}
+
+		public void revealQuestion(){
+			c.revealQuestion();
+		}
+
+		public void hideQuestion(){
+			c.hideQuestion();
+		}
 	}
 
 	public static void main(String[] args) throws FileNotFoundException, IOException{
-		Game g = new Game("../data/faculty_feud_2022.csv");
+//		Game g = new Game("../data/faculty_feud_2022.csv");
+		Game g = new Game("../data/test.csv");
 		ContestantPanel p = new ContestantPanel(g);
 		ModeratorPanel p2 = new ModeratorPanel(g);
 		Updater u = new Updater(p,p2);

@@ -10,6 +10,7 @@ public class ResponsePanel extends JPanel{
 	private JLabel score;
 	private PanelMode mode;
 	private boolean revealed = false;
+	private int stage = 0;
 
 	private void setLabelFont(JLabel l, double factor){
 		Font labelFont = l.getFont();
@@ -52,7 +53,9 @@ public class ResponsePanel extends JPanel{
 			((JButton) text).addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent e){
-					game.revealResponse(index);
+					if(stage == 0){
+						game.revealResponse(index);
+					}
 					((JButton) text).setEnabled(false);
 					JButton source = (JButton) e.getSource();
 					source.setEnabled(false);
@@ -79,6 +82,11 @@ public class ResponsePanel extends JPanel{
 		this.revealed = true;
 		((JLabel) text).setText(response.getResponse());
 		score.setText(String.valueOf(response.getScore()));
+		setLabelFont((JLabel) text, 0.4);
+	}
+
+	public void setStage(int stage){
+		this.stage = stage;
 	}
 
 	public void setResponse(Question.Response r){

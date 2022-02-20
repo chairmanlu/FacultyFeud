@@ -2,7 +2,7 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.event.*;
-import java.util.*;
+import java.util.ArrayList;
 
 @SuppressWarnings("serial")
 public class ContestantPanel extends JPanel{
@@ -11,6 +11,8 @@ public class ContestantPanel extends JPanel{
 	private Game game;
 	private Driver.Updater updater;
 	private boolean revealed[] = new boolean[8];
+	private boolean questionVisible;
+	private JLabel largeX = new JLabel("X", SwingConstants.CENTER);
 
 	private void setLabelFont(JLabel l, double factor){
 		Font labelFont = l.getFont();
@@ -59,6 +61,7 @@ public class ContestantPanel extends JPanel{
 			}
 		});
 
+		largeX.setVisible(false);
 		renderPanel();
 	}
 
@@ -76,8 +79,33 @@ public class ContestantPanel extends JPanel{
 		revealed[index] = true;
 	}
 
+	public void revealQuestion(){
+		questionVisible = true;
+	}
+
+	public void hideQuestion(){
+		questionVisible = false;
+	}
+
+	public void showStrike(){
+		largeX.setVisible(true);
+		updater.update();
+		Timer timer = new Timer(1000 , new ActionListener(){
+			@Override
+			public void actionPerformed(ActionEvent e){
+				largeX.setVisible(false);
+			}
+		});
+		timer.setRepeats(false);
+		timer.start();
+		updater.update();
+	}
+
 	public void renderPanel(){
 		this.removeAll();
+		this.add(largeX);
+		largeX.setBounds(width / 4, height / 4, width / 2, height / 2);
+		setLabelFont(largeX,1);
 
 		JLabel title = new JLabel("Faculty Feud",SwingConstants.CENTER);
 		this.add(title);
@@ -94,6 +122,8 @@ public class ContestantPanel extends JPanel{
 		JLabel question = new JLabel(q.getQuestionText(), SwingConstants.CENTER);
 		this.add(question);
 		question.setBounds(0,height / 8, width, height / 8);
+		setLabelFont(question, 0.5);
+		question.setVisible(questionVisible);
 
 		int h = height / 4;
 		//Column 1
@@ -129,8 +159,8 @@ public class ContestantPanel extends JPanel{
 		}
 
 		//Scoreboard
-		JLabel team1 = new JLabel("Team 1", SwingConstants.CENTER);
-		JLabel team2 = new JLabel("Team 2", SwingConstants.CENTER);
+		JLabel team1 = new JLabel(game.getTeamName(0), SwingConstants.CENTER);
+		JLabel team2 = new JLabel(game.getTeamName(1), SwingConstants.CENTER);
 		JLabel team1score = new JLabel("12", SwingConstants.CENTER);
 		JLabel team2score = new JLabel("15", SwingConstants.CENTER);
 		JLabel currentscore = new JLabel("36", SwingConstants.CENTER);

@@ -49,9 +49,9 @@ public class Game{
 //		reader.close();
         teamNames = new String[2];
 		Scanner sc = new Scanner(new File(questionFile));
-		ArrayList<Question.Response> responses = new ArrayList<Question.Response>();
 		boolean firstLine = true;
 		while(sc.hasNextLine()){
+			ArrayList<Question.Response> responses = new ArrayList<Question.Response>();
 			String line = sc.nextLine();
 			String[] tokens = line.split(",");
 			if(firstLine){

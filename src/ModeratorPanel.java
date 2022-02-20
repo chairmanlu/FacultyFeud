@@ -14,7 +14,8 @@ public class ModeratorPanel extends JPanel{
 	private static final JLabel title = new JLabel("Faculty Feud",SwingConstants.CENTER);
 	private static JLabel question = new JLabel("",SwingConstants.CENTER);
 	private static JLabel strikes = new JLabel("",SwingConstants.CENTER);
-	private static JButton addStrike, assignScore1, assignScore2;
+	private static JButton nextQuestion, addStrike, assignScore1, assignScore2, revealQuestion;
+	private int stage = 0;
 
 	private void setLabelFont(JLabel l, double factor){
 		Font labelFont = l.getFont();
@@ -51,14 +52,49 @@ public class ModeratorPanel extends JPanel{
 		this.setVisible(true);
 		this.requestFocus();
 
+		nextQuestion = new JButton("Next Question");
+		nextQuestion.addActionListener(new ActionListener(){
+			//@Override
+			public void actionPerformed(ActionEvent e){
+				game.nextQuestion();
+				for(int i=0;i<responseBtns.length;i++){
+					responseBtns[i].enableBtn();
+					addStrike.setEnabled(true);
+				}
+				stage = 0;
+				updater.unreveal();
+				updater.hideQuestion();
+				updater.update();
+			}
+		});
+
+		revealQuestion = new JButton("Reveal Question");
+		revealQuestion.addActionListener(new ActionListener(){
+			//@Override
+			public void actionPerformed(ActionEvent e){
+				updater.revealQuestion();
+				updater.update();
+			}
+		});
+
 		addStrike = new JButton("Add Strike");
 		addStrike.addActionListener(new ActionListener(){
 			//@Override
 			public void actionPerformed(ActionEvent e){
-				if(game.addStrike()){
-					JButton source = (JButton) e.getSource();
-					source.setEnabled(false);
+				if(stage == 0){
+					if(game.addStrike()){
+						JButton source = (JButton) e.getSource();
+//						source.setEnabled(false);
+						stage = 1;
+						source.setText("Steal Failed");
+					}
 				}
+				else if(stage == 1){
+					addStrike.setEnabled(false);
+					addStrike.setText("Add Strike");
+					stage = 2;
+				}
+				updater.strike();
 				updater.update();
 			}
 		});
@@ -68,12 +104,6 @@ public class ModeratorPanel extends JPanel{
 			//@Override
 			public void actionPerformed(ActionEvent e){
 				game.assignScore(0);
-				game.nextQuestion();
-				for(int i=0;i<responseBtns.length;i++){
-					responseBtns[i].enableBtn();
-					addStrike.setEnabled(true);
-				}
-				updater.unreveal();
 				updater.update();
 			}
 		});
@@ -83,16 +113,12 @@ public class ModeratorPanel extends JPanel{
 			//@Override
 			public void actionPerformed(ActionEvent e){
 				game.assignScore(1);
-				game.nextQuestion();
-				for(int i=0;i<responseBtns.length;i++){
-					responseBtns[i].enableBtn();
-					addStrike.setEnabled(true);
-				}
-				updater.unreveal();
 				updater.update();
 			}
 		});
 
+		this.add(nextQuestion);
+		this.add(revealQuestion);
 		this.add(addStrike);
 		this.add(assignScore1);
 		this.add(assignScore2);
@@ -133,18 +159,21 @@ public class ModeratorPanel extends JPanel{
 		//Question Board
 		Question q = game.getCurrentQuestion();
 
-		question = new JLabel(q.getQuestionText(), SwingConstants.CENTER);
-		question.setBounds(0,height / 8, width, height / 8);
-
+//		question = new JLabel(q.getQuestionText(), SwingConstants.CENTER);
+		question.setText(q.getQuestionText());
+		question.setBounds(0,height / 8, width, height / 8); 
+		setLabelFont(question, 0.5);
 		int h = height / 4;
 		//Column 1
 		for(int i=0;i<4;i++){
 			ResponsePanel rp = responseBtns[i];
 			if(i < q.numResponses()){
 				rp.setResponse(q.getResponse(i));
+				rp.setStage(stage);
 			}
 			else{
 				rp.setResponse(new Question.Response("",0));
+				rp.setStage(stage);
 			}
 			rp.setBounds(0, h + i * height / 8, width / 2, height / 8);
 		}
@@ -154,9 +183,11 @@ public class ModeratorPanel extends JPanel{
 			ResponsePanel rp = responseBtns[i + 4];
 			if(i + 4 < q.numResponses()){
 				rp.setResponse(q.getResponse(i + 4));
+				rp.setStage(stage);
 			}
 			else{
 				rp.setResponse(new Question.Response("",0));
+				rp.setStage(stage);
 			}
 			rp.setBounds(width / 2, h + i * height / 8, width / 2, height / 8);
 		}
@@ -170,6 +201,8 @@ public class ModeratorPanel extends JPanel{
 		strikes.setText(striketext);
 
 		h = 3 * (height / 4);
+		nextQuestion.setBounds(0, h, width / 3, height / 8);
+		revealQuestion.setBounds(2 * width / 3, h, width / 3, height / 8);
 		addStrike.setBounds(width / 3, h, width / 3, height / 8);
 		h += height / 8;
 		assignScore1.setBounds(0, h, width / 3, height / 8);
