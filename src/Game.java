@@ -47,7 +47,7 @@ public class Game{
 //
 //		//close reader
 //		reader.close();
-
+        teamNames = new String[2];
 		Scanner sc = new Scanner(new File(questionFile));
 		ArrayList<Question.Response> responses = new ArrayList<Question.Response>();
 		boolean firstLine = true;
