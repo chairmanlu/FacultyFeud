@@ -115,7 +115,9 @@ public class ResponsePanel extends JPanel{
 		text.setBounds(0,0,this.getWidth() - this.getHeight(),this.getHeight());
 		score.setBounds(this.getWidth() - this.getHeight(), 0, this.getHeight(), this.getHeight());
 
-//		setLabelFont(text,0.5);
+		if(mode == PanelMode.CONTESTANT){
+			setLabelFont((JLabel) text,0.5);
+		}
 		setLabelFont(score,0.5);
 	}
 }
