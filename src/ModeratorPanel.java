@@ -83,9 +83,6 @@ public class ModeratorPanel extends JPanel{
 			//@Override
 			public void actionPerformed(ActionEvent e){
 				game.nextQuestion();
-				for(int i=0;i<responseBtns.length;i++){
-					addStrike.setEnabled(true);
-				}
 				updater.update();
 			}
 		});
@@ -106,6 +103,7 @@ public class ModeratorPanel extends JPanel{
 				game.addStrike();
 				updater.update();
 				updater.showStrike();
+				Driver.playSound("strike.wav");
 			}
 		});
 

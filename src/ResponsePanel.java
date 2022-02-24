@@ -58,6 +58,8 @@ public class ResponsePanel extends JPanel{
 				public void actionPerformed(ActionEvent e){
 					game.revealResponse(index);
 					updater.update();
+
+					Driver.playSound("ding.wav");
 				}
 			});
 		}
