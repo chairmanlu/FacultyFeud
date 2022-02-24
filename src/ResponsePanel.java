@@ -9,8 +9,9 @@ public class ResponsePanel extends JPanel{
 	private JComponent text;
 	private JLabel score;
 	private PanelMode mode;
-	private boolean revealed = false;
-	private int stage = 0;
+	private int index;
+	private ModeratorPanel.Updater updater;
+	private Game game;
 
 	private void setLabelFont(JLabel l, double factor){
 		Font labelFont = l.getFont();
@@ -33,80 +34,36 @@ public class ResponsePanel extends JPanel{
 		l.setFont(new Font(labelFont.getName(), Font.PLAIN, fontSizeToUse));
 	}
 
-	public ResponsePanel(Game game, Question.Response response, PanelMode mode, int index, Driver.Updater updater){
+	public ResponsePanel(Game game, int index, PanelMode mode, ModeratorPanel.Updater updater){
 		this.setVisible(true);
 		this.setLayout(null);
-		this.response = response;
+		this.game = game;
 		this.mode = mode;
+		this.index = index;
+		this.updater = updater;
 
+		score = new JLabel("", SwingConstants.CENTER);
 		if(mode == PanelMode.CONTESTANT){
-			if(response.getResponse().equals("")){
-				text = new JLabel("", SwingConstants.CENTER);
-			}
-			else{
-				text = new JLabel(String.valueOf(index + 1), SwingConstants.CENTER);
-			}
-			score = new JLabel("", SwingConstants.CENTER);
+			text = new JLabel("", SwingConstants.CENTER);
+			this.setBackground(Driver.BG_COLOR);
+			text.setBackground(Driver.BG_COLOR);
+			score.setBackground(Driver.BG_COLOR);
+			text.setForeground(Driver.TEXT_COLOR);
+			score.setForeground(Driver.TEXT_COLOR);
 		}
 		else{
-			text = new JButton(response.getResponse());
+			text = new JButton("");
 			((JButton) text).addActionListener(new ActionListener(){
 				@Override
 				public void actionPerformed(ActionEvent e){
-					if(stage == 0){
-						game.revealResponse(index);
-					}
-					((JButton) text).setEnabled(false);
-					JButton source = (JButton) e.getSource();
-					source.setEnabled(false);
-					updater.reveal(index);
+					game.revealResponse(index);
 					updater.update();
 				}
 			});
-			if(response.getResponse().equals("")){
-				score = new JLabel("", SwingConstants.CENTER);
-			}
-			else{
-				score = new JLabel(String.valueOf(response.getScore()), SwingConstants.CENTER);
-			}
 		}
 
 		this.add(text);
 		this.add(score);
-
-		text.setBounds(0,0,this.getWidth() - this.getHeight(),this.getHeight());
-		score.setBounds(this.getWidth() - this.getHeight(), 0, this.getHeight(), this.getHeight());
-	}
-
-	public void reveal(){
-		this.revealed = true;
-		((JLabel) text).setText(response.getResponse());
-		score.setText(String.valueOf(response.getScore()));
-		setLabelFont((JLabel) text, 0.4);
-	}
-
-	public void setStage(int stage){
-		this.stage = stage;
-	}
-
-	public void setResponse(Question.Response r){
-		this.response = r;
-		if(mode == PanelMode.CONTESTANT){
-			((JLabel) text).setText(r.getResponse());
-		}
-		else{
-			((JButton) text).setText(r.getResponse());
-		}
-		if(r.getResponse().equals("")){
-			score.setText("");
-		}
-		else{
-			score.setText(String.valueOf(r.getScore()));
-		}
-	}
-
-	public void enableBtn(){
-		((JButton) text).setEnabled(true);
 	}
 
 	@Override
@@ -115,9 +72,48 @@ public class ResponsePanel extends JPanel{
 		text.setBounds(0,0,this.getWidth() - this.getHeight(),this.getHeight());
 		score.setBounds(this.getWidth() - this.getHeight(), 0, this.getHeight(), this.getHeight());
 
-		if(mode == PanelMode.CONTESTANT){
-			setLabelFont((JLabel) text,0.5);
-		}
 		setLabelFont(score,0.5);
+
+		Question q = game.getCurrentQuestion();
+
+		if(mode == PanelMode.CONTESTANT){
+			JLabel textLbl = (JLabel) text;
+			setLabelFont(textLbl, 0.5);
+
+			if(index < q.numResponses()){
+				Question.Response response = q.getResponse(index);
+				if(game.isRevealed(index)){
+					textLbl.setText(response.getResponse());
+					score.setText(String.valueOf(response.getScore()));
+
+					text.setBorder(BorderFactory.createLineBorder(Driver.TEXT_COLOR, 1));
+					score.setBorder(BorderFactory.createLineBorder(Driver.TEXT_COLOR, 1));
+				}
+				else{
+					textLbl.setText(String.valueOf(index + 1));
+					score.setText("");
+				}
+			}
+			else{
+				textLbl.setText("");
+				score.setText("");
+			}
+		}
+		else{
+			JButton textBtn = (JButton) text;
+
+			if(index < q.numResponses()){
+				Question.Response response = q.getResponse(index);
+
+				textBtn.setText(response.getResponse());
+				score.setText(String.valueOf(response.getScore()));
+				textBtn.setEnabled(!game.isRevealed(index));
+			}
+			else{
+				textBtn.setText("");
+				score.setText("");
+				textBtn.setEnabled(false);
+			}
+		}
 	}
 }

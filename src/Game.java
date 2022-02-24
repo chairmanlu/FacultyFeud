@@ -10,43 +10,14 @@ public class Game{
 	private int curQ; // index of current question
 	private int currentScore; // current question, points gotten from current question
 	private int multiplier;
-
+	private boolean[] revealed;
+	private boolean scoresAssigned;
+	private boolean questionRevealed;
 
 	private String questionFile;
 
 	public Game(String questionFile) throws FileNotFoundException, IOException {
-//		BufferedReader reader = new BufferedReader(new FileReader(questionFile));
-//
-//		// read file line by line
-//		String line = null;
-//		Scanner scanner = null;
-//		int index = 0;
 		questions = new ArrayList<Question>();
-//
-//		while ((line = reader.readLine()) != null) {
-//			ArrayList<Question.Response> rezzys = new ArrayList<Question.Response>();
-//			String q = "";
-//			scanner = new Scanner(line);
-//			scanner.useDelimiter(",");
-//			int count = 0;
-//			while (scanner.hasNext()) {
-//				if(count == 0){
-//					q = scanner.next();
-//					count++;
-//				} else {
-//					String rez = scanner.next();
-//					int points = Integer.parseInt(scanner.next());
-//					Question.Response fun = new Question.Response(rez, points);
-//					rezzys.add(fun);
-//					count++;
-//				}
-//			}
-//			Question zesty = new Question(q, rezzys);
-//			questions.add(zesty);
-//		}
-//
-//		//close reader
-//		reader.close();
         teamNames = new String[2];
 		Scanner sc = new Scanner(new File(questionFile));
 		boolean firstLine = true;
@@ -75,6 +46,8 @@ public class Game{
 		scores = new int[2];
 		currentScore = 0;
 		multiplier = 1;
+		revealed = new boolean[8];
+		questionRevealed = false;
 	}
 
 	public int getScore(int team){
@@ -84,6 +57,7 @@ public class Game{
 	public void assignScore(int team){
 		scores[team] += (currentScore * multiplier);
 		currentScore = 0;
+		scoresAssigned = true;
 	}
 
 	public int currentScore(){
@@ -92,7 +66,9 @@ public class Game{
 
 	// returns true if it was strike 3
 	public boolean addStrike(){
-		strikes++;
+		if(strikes < 3){
+			strikes++;
+		}
 		return strikes == 3;
 	}
 
@@ -108,6 +84,13 @@ public class Game{
 	public int nextQuestion(){
 		curQ++;
 		strikes = 0;
+		scoresAssigned = false;
+		questionRevealed = false;
+
+		for(int i=0;i<revealed.length;i++){
+			revealed[i] = false;
+		}
+
 		if(curQ >= questions.size()) {
 			return -1;
 		}
@@ -116,15 +99,34 @@ public class Game{
 		}
 	}
 
+	public boolean isRevealed(int i){
+		return revealed[i];
+	}
+
+	public boolean scoringAllowed(){
+		return !scoresAssigned;
+	}
+
 	public void setMultiplier(int m){
 		multiplier = m;
 	}
 
+	public void revealQuestion(){
+		questionRevealed = true;
+	}
+
+	public boolean questionRevealed(){
+		return questionRevealed;
+	}
+
 	public void revealResponse(int i){
-		Question rev = questions.get(curQ);
-		Question.Response res = rev.getResponse(i);
-		int points = res.getScore();
-		currentScore = currentScore + points;
+		if(!scoresAssigned && strikes < 3){
+			Question rev = questions.get(curQ);
+			Question.Response res = rev.getResponse(i);
+			int points = res.getScore();
+			currentScore = currentScore + points;
+		}
+		revealed[i] = true;
 	}
 
 	public String getTeamName(int team){

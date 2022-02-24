@@ -1,49 +1,18 @@
 import javax.swing.*;
+import java.awt.*;
 import java.io.*;
 
 public class Driver{
-	static class Updater{
-		private ContestantPanel c;
-		private ModeratorPanel m;
-		public Updater(ContestantPanel c, ModeratorPanel m){
-			this.c = c;
-			this.m = m;
-		}
-
-		public void update(){
-			c.renderPanel();
-			m.renderPanel();
-		}
-
-		public void strike(){
-			c.showStrike();
-		}
-
-		public void reveal(int index){
-			c.reveal(index);
-		}
-
-		public void unreveal(){
-			c.unreveal();
-		}
-
-		public void revealQuestion(){
-			c.revealQuestion();
-		}
-
-		public void hideQuestion(){
-			c.hideQuestion();
-		}
-	}
+	static Color BG_COLOR = Color.BLUE;
+	static Color TEXT_COLOR = Color.WHITE;
+	static Color TITLE_COLOR = Color.YELLOW;
+	static Color STRIKE_COLOR = Color.RED;
 
 	public static void main(String[] args) throws FileNotFoundException, IOException{
-//		Game g = new Game("../data/faculty_feud_2022.csv");
-		Game g = new Game("../data/test.csv");
+		Game g = new Game("../data/csv_practice.csv");
+//		Game g = new Game("../data/test.csv");
 		ContestantPanel p = new ContestantPanel(g);
-		ModeratorPanel p2 = new ModeratorPanel(g);
-		Updater u = new Updater(p,p2);
-		p.setUpdater(u);
-		p2.setUpdater(u);
+		ModeratorPanel p2 = new ModeratorPanel(g, p);
 
 		JFrame frame = new JFrame();
 		frame.add(p);
