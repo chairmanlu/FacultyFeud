@@ -84,6 +84,7 @@ public class Game{
 	public int nextQuestion(){
 		curQ++;
 		strikes = 0;
+		currentScore = 0;
 		scoresAssigned = false;
 		questionRevealed = false;
 
