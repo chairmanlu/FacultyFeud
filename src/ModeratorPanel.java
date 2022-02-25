@@ -13,8 +13,8 @@ public class ModeratorPanel extends JPanel{
 	private ResponsePanel[] responseBtns;
 	private static final JLabel title = new JLabel("Faculty Feud",SwingConstants.CENTER);
 	private static JLabel question = new JLabel("",SwingConstants.CENTER);
-	private static JLabel strikes = new JLabel("",SwingConstants.CENTER);
-	private static JButton nextQuestion, addStrike, assignScore1, assignScore2, revealQuestion;
+//	private static JLabel strikes = new JLabel("",SwingConstants.CENTER);
+	private static JButton nextQuestion, addStrike, assignScore1, assignScore2, revealQuestion, giveStrike;
 	private int stage = 0;
 
 	static class Updater{
@@ -107,7 +107,17 @@ public class ModeratorPanel extends JPanel{
 			}
 		});
 
-		assignScore1 = new JButton("Score for Team 1");
+		giveStrike = new JButton("X");
+		giveStrike.addActionListener(new ActionListener(){
+			//@Override
+			public void actionPerformed(ActionEvent e){
+				updater.update();
+				updater.showStrike();
+				Driver.playSound("strike.wav");
+			}
+		});
+
+		assignScore1 = new JButton("Score for " + game.getTeamName(0));
 		assignScore1.addActionListener(new ActionListener(){
 			//@Override
 			public void actionPerformed(ActionEvent e){
@@ -116,7 +126,7 @@ public class ModeratorPanel extends JPanel{
 			}
 		});
 
-		assignScore2 = new JButton("Score for Team 2");
+		assignScore2 = new JButton("Score for " + game.getTeamName(1));
 		assignScore2.addActionListener(new ActionListener(){
 			//@Override
 			public void actionPerformed(ActionEvent e){
@@ -130,7 +140,7 @@ public class ModeratorPanel extends JPanel{
 		this.add(addStrike);
 		this.add(assignScore1);
 		this.add(assignScore2);
-		this.add(strikes);
+		this.add(giveStrike);
 
 		this.addComponentListener(new ComponentAdapter() {
 			@Override
@@ -177,11 +187,11 @@ public class ModeratorPanel extends JPanel{
 
 		//Scoreboard
 
-		String striketext = "";
-		for(int i=0;i<game.getStrikes();i++){
-			striketext += "X";
-		}
-		strikes.setText(striketext);
+//		String striketext = "";
+//		for(int i=0;i<game.getStrikes();i++){
+//			striketext += "X";
+//		}
+//		strikes.setText(striketext);
 
 		h = 3 * (height / 4);
 		nextQuestion.setBounds(0, h, width / 3, height / 8);
@@ -189,10 +199,11 @@ public class ModeratorPanel extends JPanel{
 		addStrike.setBounds(width / 3, h, width / 3, height / 8);
 		h += height / 8;
 		assignScore1.setBounds(0, h, width / 3, height / 8);
-		strikes.setBounds(width / 3, h, width / 3, height / 8);
 		assignScore2.setBounds(2 * width / 3, h, width / 3, height / 8);
+//		strikes.setBounds(width / 3, h, width / 3, height / 8);
+		giveStrike.setBounds(width / 3, h, width / 3, height / 8);
 
-		setLabelFont(strikes,0.75);
+//		setLabelFont(strikes,0.75);
 	}
 
 	public void paintComponent(Graphics g){

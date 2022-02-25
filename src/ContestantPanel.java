@@ -127,6 +127,8 @@ public class ContestantPanel extends JPanel{
 				System.out.println("Moved to " + e.getComponent().getLocation());
 			}
 		});
+
+		renderPanel();
 	}
 
 	public void showStrike(){
@@ -190,8 +192,8 @@ public class ContestantPanel extends JPanel{
 		strikes.setBounds(width / 3, h, width / 3, height / 8);
 		team2score.setBounds(2 * width / 3, h, width / 3, height / 8);
 
-		setLabelFont(team1,0.8);
-		setLabelFont(team2,0.8);
+		setLabelFont(team1,0.7);
+		setLabelFont(team2,0.7);
 		setLabelFont(team1score,0.75);
 		setLabelFont(team2score,0.75);
 		setLabelFont(currentscore,1.0);

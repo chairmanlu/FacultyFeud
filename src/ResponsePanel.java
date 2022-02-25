@@ -92,6 +92,8 @@ public class ResponsePanel extends JPanel{
 					score.setBorder(BorderFactory.createLineBorder(Driver.TEXT_COLOR, 1));
 				}
 				else{
+					text.setBorder(javax.swing.BorderFactory.createEmptyBorder());
+					score.setBorder(javax.swing.BorderFactory.createEmptyBorder());
 					textLbl.setText(String.valueOf(index + 1));
 					score.setText("");
 				}
